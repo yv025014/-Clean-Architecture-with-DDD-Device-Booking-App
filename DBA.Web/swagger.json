@@ -1,0 +1,120 @@
+{
+  "openapi": "3.0.1",
+  "info": { "title": "DBA.Api", "version": "1.0" },
+  "paths": {
+    "/api/DeviceBookings": {
+      "get": {
+        "tags": ["DeviceBookings"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/DeviceBookingDto" } }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["DeviceBookings"],
+        "requestBody": {
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateDeviceBookingCommand" } } }
+        },
+        "responses": {
+          "201": { "description": "Created", "content": { "application/json": { "schema": { "type": "string", "format": "uuid" } } } },
+          "400": { "description": "Bad Request" }
+        }
+      }
+    },
+    "/api/DeviceBookings/{id}": {
+      "get": {
+        "tags": ["DeviceBookings"],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } },
+          { "name": "Id", "in": "query", "schema": { "type": "string", "format": "uuid" } }
+        ],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DeviceBookingDto" } } } },
+          "404": { "description": "Not Found" }
+        }
+      }
+    },
+    "/api/DeviceBookings/{id}/approve": {
+      "put": {
+        "tags": ["DeviceBookings"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ApproveDeviceBookingCommand" } } } },
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "string", "format": "uuid" } } } },
+          "400": { "description": "Bad Request" }, "404": { "description": "Not Found" }
+        }
+      }
+    },
+    "/api/DeviceBookings/{id}/reject": {
+      "put": {
+        "tags": ["DeviceBookings"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": { "content": { "application/json": { "schema": { "$ref": "#/components/schemas/RejectDeviceBookingCommand" } } } },
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "string", "format": "uuid" } } } },
+          "400": { "description": "Bad Request" }, "404": { "description": "Not Found" }
+        }
+      }
+    },
+    "/api/DeviceBookings/{id}/return": {
+      "put": {
+        "tags": ["DeviceBookings"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "type": "string", "format": "uuid" } } } },
+          "400": { "description": "Bad Request" }, "404": { "description": "Not Found" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DeviceBookingDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "deviceName": { "type": "string" },
+          "applicant": { "type": "string" },
+          "expectedReturn": { "type": "string", "format": "date-time" },
+          "actualReturn": { "type": "string", "format": "date-time", "nullable": true },
+          "approver": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32" },
+          "reason": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "CreateDeviceBookingCommand": {
+        "type": "object",
+        "properties": {
+          "deviceName": { "type": "string", "nullable": true },
+          "applicant": { "type": "string", "nullable": true },
+          "expectedReturn": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": false
+      },
+      "ApproveDeviceBookingCommand": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "approver": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "RejectDeviceBookingCommand": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "approver": { "type": "string", "nullable": true },
+          "reason": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
